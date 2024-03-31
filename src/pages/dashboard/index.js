@@ -104,7 +104,9 @@ const DashboardDefault = () => {
             <Stack direction="row" alignItems="center" spacing={0}>
               <Button
                 size="small"
-                onClick={() => setSlot('month')}
+                onClick={() => {
+                  setSlot('month');
+                }}
                 color={slot === 'month' ? 'primary' : 'secondary'}
                 variant={slot === 'month' ? 'outlined' : 'text'}
               >

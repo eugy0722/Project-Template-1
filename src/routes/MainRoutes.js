@@ -3,6 +3,7 @@ import { lazy } from 'react';
 // project import
 import Loadable from 'components/Loadable';
 import MainLayout from 'layout/MainLayout';
+import PrivateRoutes from './PrivateRoutes';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
@@ -23,37 +24,42 @@ const MainRoutes = {
   element: <MainLayout />,
   children: [
     {
-      path: '/',
-      element: <DashboardDefault />
-    },
-    {
-      path: 'color',
-      element: <Color />
-    },
-    {
-      path: 'dashboard',
+      element: <PrivateRoutes />,
       children: [
         {
-          path: 'default',
+          path: '/',
           element: <DashboardDefault />
+        },
+        {
+          path: 'color',
+          element: <Color />
+        },
+        {
+          path: 'dashboard',
+          children: [
+            {
+              path: 'default',
+              element: <DashboardDefault />
+            }
+          ]
+        },
+        {
+          path: 'sample-page',
+          element: <SamplePage />
+        },
+        {
+          path: 'shadow',
+          element: <Shadow />
+        },
+        {
+          path: 'typography',
+          element: <Typography />
+        },
+        {
+          path: 'icons/ant',
+          element: <AntIcons />
         }
       ]
-    },
-    {
-      path: 'sample-page',
-      element: <SamplePage />
-    },
-    {
-      path: 'shadow',
-      element: <Shadow />
-    },
-    {
-      path: 'typography',
-      element: <Typography />
-    },
-    {
-      path: 'icons/ant',
-      element: <AntIcons />
     }
   ]
 };

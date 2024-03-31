@@ -29,12 +29,19 @@ import AnimateButton from 'components/@extended/AnimateButton';
 // assets
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
+//useContext
+import useAuthContext from '../../../auth/hook/useAuthContext';
+
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const AuthLogin = () => {
   const [checked, setChecked] = React.useState(false);
+  const [input, setInput] = React.useState({ email: '', password: '' });
 
   const [showPassword, setShowPassword] = React.useState(false);
+
+  const { LogInAction } = useAuthContext();
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -43,12 +50,23 @@ const AuthLogin = () => {
     event.preventDefault();
   };
 
+  const handleSubmit = async () => {
+    if (input.email !== '' && input.password !== '') {
+      await LogInAction(input);
+      return;
+    }
+  };
+
+  const handleChange = (values) => {
+    setInput({ email: values.email, password: values.password });
+  };
+
   return (
     <>
       <Formik
         initialValues={{
-          email: 'info@codedthemes.com',
-          password: '123456',
+          email: '',
+          password: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
@@ -59,6 +77,8 @@ const AuthLogin = () => {
           try {
             setStatus({ success: false });
             setSubmitting(false);
+            handleChange(values);
+            handleSubmit(values);
           } catch (err) {
             setStatus({ success: false });
             setErrors({ submit: err.message });
