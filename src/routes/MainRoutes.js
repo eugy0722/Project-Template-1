@@ -12,10 +12,16 @@ const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
 const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
 
 // render - utilities
-const Typography = Loadable(lazy(() => import('pages/components-overview/Typography')));
-const Color = Loadable(lazy(() => import('pages/components-overview/Color')));
-const Shadow = Loadable(lazy(() => import('pages/components-overview/Shadow')));
-const AntIcons = Loadable(lazy(() => import('pages/components-overview/AntIcons')));
+const Typography = Loadable(lazy(() => import('pages/components-overview/utitities/Typography')));
+const Color = Loadable(lazy(() => import('pages/components-overview/utitities/Color')));
+const Shadow = Loadable(lazy(() => import('pages/components-overview/utitities/Shadow')));
+const AntIcons = Loadable(lazy(() => import('pages/components-overview/utitities/AntIcons')));
+
+// render - managenment
+const User = Loadable(lazy(() => import('pages/components-overview/managenment/Users')));
+const Market = Loadable(lazy(() => import('pages/components-overview/managenment/Markets')));
+const Sector = Loadable(lazy(() => import('pages/components-overview/managenment/Sectors')));
+const ProductService = Loadable(lazy(() => import('pages/components-overview/managenment/ProductsServices')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -58,6 +64,22 @@ const MainRoutes = {
         {
           path: 'icons/ant',
           element: <AntIcons />
+        },
+        {
+          path: '/users',
+          element: <User />
+        },
+        {
+          path: '/markets',
+          element: <Market />
+        },
+        {
+          path: '/sectors',
+          element: <Sector />
+        },
+        {
+          path: '/productsservices',
+          element: <ProductService />
         }
       ]
     }
