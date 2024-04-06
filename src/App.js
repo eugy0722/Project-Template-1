@@ -7,10 +7,10 @@ import { AuthContext, SessionAction } from 'auth/AuthContext';
 // ==============================|| APP - THEME, ROUTER, LOCAL  ||============================== //
 
 const App = () => {
-  const { LogInAction, LogOutAction } = SessionAction();
+  const { LogInAction, LogOutAction, RegisterAction } = SessionAction();
   const { user, token } = LogInAction(null);
   return (
-    <AuthContext.Provider value={{ user, token, LogInAction, LogOutAction }}>
+    <AuthContext.Provider value={{ user, token, LogInAction, LogOutAction, RegisterAction }}>
       <ThemeCustomization>
         <ScrollTop>
           <Routes />

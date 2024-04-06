@@ -46,5 +46,30 @@ export const SessionAction = () => {
     navigate('/login');
   };
 
-  return { LogInAction, LogOutAction };
+  const RegisterAction = (data) => {
+    try {
+      if (data !== null) {
+        axios
+          .post('http://localhost:8080/user/register', data, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then((response) => {
+            alert(JSON.stringify(response, null, 2));
+            if (response.data.username === data.username) {
+              navigate('/login');
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+      return;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  return { LogInAction, LogOutAction, RegisterAction };
 };
