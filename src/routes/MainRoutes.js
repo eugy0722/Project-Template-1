@@ -23,6 +23,12 @@ const Market = Loadable(lazy(() => import('pages/components-overview/managenment
 const Sector = Loadable(lazy(() => import('pages/components-overview/managenment/Sectors')));
 const ProductService = Loadable(lazy(() => import('pages/components-overview/managenment/ProductsServices')));
 
+// render - manager update
+const UserForm = Loadable(lazy(() => import('components/update-forms/UserForm')));
+const MarketForm = Loadable(lazy(() => import('components/update-forms/MarketForm')));
+const SectorForm = Loadable(lazy(() => import('components/update-forms/SectorForm')));
+const BusinessForm = Loadable(lazy(() => import('components/update-forms/BusinessForm')));
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -66,20 +72,36 @@ const MainRoutes = {
           element: <AntIcons />
         },
         {
-          path: '/users',
+          path: 'users',
           element: <User />
+        },
+        {
+          path: 'users/update',
+          element: <UserForm />
         },
         {
           path: '/markets',
           element: <Market />
         },
         {
+          path: '/market/update',
+          element: <MarketForm />
+        },
+        {
           path: '/sectors',
           element: <Sector />
         },
         {
-          path: '/productsservices',
+          path: 'sectors/update',
+          element: <SectorForm />
+        },
+        {
+          path: '/business',
           element: <ProductService />
+        },
+        {
+          path: 'business/update',
+          element: <BusinessForm />
         }
       ]
     }

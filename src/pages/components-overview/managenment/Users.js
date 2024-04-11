@@ -1,19 +1,17 @@
-// material-ui
-// import { Breadcrumbs, Divider, Grid, Link, Stack, Typography } from '@mui/material';
-import { Grid } from '@mui/material/index';
+// import @mui/material
+import { Grid } from '../../../../node_modules/@mui/material/index';
 
-// project import
+// import componentSkeleton
 import ComponentSkeleton from '../ComponentSkeleton';
-// import MainCard from 'components/MainCard';
-
-// ==============================|| COMPONENTS - TYPOGRAPHY ||============================== //
+import DataTable from 'components/Tables/UserDataTable';
 
 const ComponentUser = () => (
   <ComponentSkeleton>
     <Grid>
-      <h1>User Manager</h1>
-      <Grid>Create User</Grid>
-      <Grid>Users List</Grid>
+      <Grid>
+        <h2>Lista de Utilizadores</h2>
+        <DataTable />
+      </Grid>
     </Grid>
   </ComponentSkeleton>
 );

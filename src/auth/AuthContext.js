@@ -23,6 +23,7 @@ export const SessionAction = () => {
               setUser(response.data.user);
               setToken(response.data.token);
               localStorage.setItem('site', response.token);
+              alert(JSON.stringify(response));
               navigate('/');
             }
           })
@@ -46,7 +47,7 @@ export const SessionAction = () => {
     navigate('/login');
   };
 
-  const RegisterAction = (data) => {
+  const RegisterAction = (data, redirect = false) => {
     try {
       if (data !== null) {
         axios
@@ -56,19 +57,19 @@ export const SessionAction = () => {
             }
           })
           .then((response) => {
-            alert(JSON.stringify(response, null, 2));
-            if (response.data.username === data.username) {
-              navigate('/login');
-            }
+            alert(JSON.stringify(response.data, null, 2));
+            if (redirect) navigate('/login');
+            return true;
           })
           .catch((error) => {
             console.log(error);
           });
       }
-      return;
     } catch (err) {
       console.log(err);
     }
+
+    return false;
   };
 
   return { LogInAction, LogOutAction, RegisterAction };

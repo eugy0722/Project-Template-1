@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
 import {
-  Box,
   Button,
   Divider,
-  FormControl,
   FormHelperText,
   Grid,
   Link,
@@ -15,18 +13,19 @@ import {
   InputLabel,
   OutlinedInput,
   Stack,
-  Typography
+  Typography,
+  Select,
+  MenuItem
 } from '@mui/material';
 
 // third party
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
+import { useForm } from 'react-hook-form';
+
 // import axios from 'axios';
 
 // project import
 import FirebaseSocial from './FirebaseSocial';
 import AnimateButton from 'components/@extended/AnimateButton';
-import { strengthColor, strengthIndicator } from 'utils/password-strength';
 import useAuthContext from 'auth/hook/useAuthContext';
 
 // assets
@@ -35,8 +34,15 @@ import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 // ============================|| FIREBASE - REGISTER ||============================ //
 
 const AuthRegister = () => {
-  const [level, setLevel] = useState();
+  // Estados
   const [showPassword, setShowPassword] = useState(false);
+
+  // ContextAPI
+  const {
+    register,
+    formState: { errors },
+    handleSubmit
+  } = useForm();
   const { RegisterAction } = useAuthContext();
 
   const handleClickShowPassword = () => {
@@ -47,191 +53,133 @@ const AuthRegister = () => {
     event.preventDefault();
   };
 
-  const changePassword = (value) => {
-    const temp = strengthIndicator(value);
-    setLevel(strengthColor(temp));
+  const onSubmit = async (data) => {
+    await RegisterAction(data, true);
   };
-
-  useEffect(() => {
-    changePassword('');
-  }, []);
-
-  const handleSubmit = async () => {
-    const inputs = formik.values;
-    await RegisterAction(inputs);
-
-    return;
-  };
-
-  const formik = useFormik({
-    initialValues: {
-      first_name: '',
-      last_name: '',
-      number_phone: '',
-      email: '',
-      username: '',
-      perfil: '',
-      password: '',
-      submit: null
-    },
-    validationSchema: Yup.object().shape({
-      first_name: Yup.string().max(255).required('First Name is required'),
-      last_name: Yup.string().max(255).required('Last Name is required'),
-      number_phone: Yup.string().min(9).required('Number Phone is required'),
-      email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-      username: Yup.string().max(30).required('Username is required'),
-      perfil: Yup.string().required('Perfil is required'),
-      password: Yup.string().max(255).required('Password is required')
-    }),
-    onSubmit: (values) => alert(JSON.stringify(values, null, 2))
-  });
 
   return (
     <>
-      <form action="#" noValidate onSubmit={handleSubmit}>
+      <form noValidate onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <Stack spacing={1}>
-              <InputLabel htmlFor="first_name-signup">First Name*</InputLabel>
+              <InputLabel htmlFor="first_name-signup">Primeiro Nome*</InputLabel>
               <OutlinedInput
                 id="first_name-login"
+                aria-invalid={errors.first_name ? 'true' : 'false'}
                 type="first_name"
-                value={formik.values.first_name}
                 name="first_name"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
                 placeholder="John"
+                {...register('first_name', { required: true, maxLength: 100 })}
                 fullWidth
-                error={Boolean(formik.touched.first_name && formik.errors.first_name)}
               />
-              {formik.touched.first_name && formik.errors.first_name && (
-                <FormHelperText error id="helper-text-first_name-signup">
-                  {formik.errors.first_name}
-                </FormHelperText>
-              )}
+              <FormHelperText error id="helper-text-first_name-signup">
+                {errors.first_name?.type === 'required' && <p role="alert">Um Primeiro nome é requerido</p>}
+                {errors.first_name?.type === 'maxLength' && <p role="alert">Um Primeiro nome deve ter no máximo 100 letras</p>}
+              </FormHelperText>
             </Stack>
           </Grid>
           <Grid item xs={12} md={6}>
             <Stack spacing={1}>
-              <InputLabel htmlFor="last_name-signup">Last Name*</InputLabel>
+              <InputLabel htmlFor="last_name-signup">Último Nome*</InputLabel>
               <OutlinedInput
                 fullWidth
-                error={Boolean(formik.touched.last_name && formik.errors.last_name)}
                 id="last_name-signup"
                 type="last_name"
-                value={formik.values.last_name}
                 name="last_name"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
+                aria-invalid={errors.last_name ? 'true' : 'false'}
                 placeholder="Doe"
+                {...register('last_name', { required: true, maxLength: 100 })}
                 inputProps={{}}
               />
-              {formik.touched.last_name && formik.errors.last_name && (
-                <FormHelperText error id="helper-text-last_name-signup">
-                  {formik.errors.last_name}
-                </FormHelperText>
-              )}
+              <FormHelperText error id="helper-text-last_name-signup">
+                {errors.last_name?.type === 'required' && <p role="alert">Um Ultimo nome é requerido</p>}
+                {errors.last_name?.type === 'maxLength' && <p role="alert">Um Ultimo nome deve ter no máximo 100 letras</p>}
+              </FormHelperText>
             </Stack>
           </Grid>
           <Grid item xs={12}>
             <Stack spacing={1}>
-              <InputLabel htmlFor="number_phone-signup">Number Phone*</InputLabel>
+              <InputLabel htmlFor="number_phone-signup">Número de Telefone*</InputLabel>
               <OutlinedInput
                 fullWidth
-                error={Boolean(formik.touched.number_phone && formik.errors.number_phone)}
                 id="number_phone-signup"
-                value={formik.values.number_phone}
                 name="number_phone"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
+                aria-invalid={errors.number_phone ? 'true' : 'false'}
                 placeholder="+244 9xx xxx xxx"
+                {...register('number_phone', { required: true, maxLength: 9 })}
                 inputProps={{}}
               />
-              {formik.touched.number_phone && formik.errors.number_phone && (
-                <FormHelperText error id="helper-text-number_phone-signup">
-                  {formik.errors.number_phone}
-                </FormHelperText>
-              )}
+              <FormHelperText error id="helper-text-number_phone-signup">
+                {errors.number_phone?.type === 'required' && <p role="alert">Um número de telefone é requerido</p>}
+                {errors.number_phone?.type === 'minLength' && <p role="alert">Um número de telefone no máximo 9 números</p>}
+              </FormHelperText>
             </Stack>
           </Grid>
           <Grid item xs={12}>
             <Stack spacing={1}>
-              <InputLabel htmlFor="email-signup">Email Address*</InputLabel>
+              <InputLabel htmlFor="email-signup">Endereço de Email*</InputLabel>
               <OutlinedInput
                 fullWidth
-                error={Boolean(formik.touched.email && formik.errors.email)}
                 id="email-login"
                 type="email"
-                value={formik.values.email}
                 name="email"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
+                aria-invalid={errors.email ? 'true' : 'false'}
                 placeholder="demo@company.com"
+                {...register('email', { required: 'O endereço de email não e válido' })}
                 inputProps={{}}
               />
-              {formik.touched.email && formik.errors.email && (
-                <FormHelperText error id="helper-text-email-signup">
-                  {formik.errors.email}
-                </FormHelperText>
-              )}
+              <FormHelperText error id="helper-text-email-signup">
+                {errors.email && <p role="alert"> {errors.email.message} </p>}
+              </FormHelperText>
             </Stack>
           </Grid>
           <Grid item xs={12}>
             <Stack spacing={1}>
-              <InputLabel htmlFor="username-signup">Username*</InputLabel>
+              <InputLabel htmlFor="username-signup">Nome de Utilizador*</InputLabel>
               <OutlinedInput
                 fullWidth
-                error={Boolean(formik.touched.username && formik.errors.username)}
                 id="username-login"
                 type="username"
-                value={formik.values.username}
                 name="username"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                placeholder="Type your username"
+                aria-invalid={errors.username ? 'true' : 'false'}
+                placeholder="Insira o nome de Utilizador"
+                {...register('username', { required: true, maxLength: 50 })}
                 inputProps={{}}
               />
-              {formik.touched.username && formik.errors.username && (
-                <FormHelperText error id="helper-text-username-signup">
-                  {formik.errors.username}
-                </FormHelperText>
-              )}
+              <FormHelperText error id="helper-text-username-signup">
+                {errors.username?.type === 'required' && <p role="alert">Um Nome de Utilizador é requerido</p>}
+                {errors.username?.type === 'minLength' && <p role="alert">Um Nome de Utilizador no máximo 50 números</p>}
+              </FormHelperText>
             </Stack>
           </Grid>
           <Grid item xs={12}>
             <Stack spacing={1}>
               <InputLabel htmlFor="perfil-signup">Perfil*</InputLabel>
-              <OutlinedInput
-                fullWidth
-                error={Boolean(formik.touched.perfil && formik.errors.perfil)}
-                id="perfil-login"
-                type="perfil"
-                value={formik.values.perfil}
+              <Select
+                labelId="demo-simple-select-label"
+                id="perfil-signup"
                 name="perfil"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                placeholder="Choose your perfil"
-                inputProps={{}}
-              />
-              {formik.touched.perfil && formik.errors.perfil && (
-                <FormHelperText error id="helper-text-perfil-signup">
-                  {formik.errors.perfil}
-                </FormHelperText>
-              )}
+                label="Perfil"
+                {...register('perfil', { required: true })}
+              >
+                <MenuItem value={'Consumidor'}>Consumidor</MenuItem>
+                <MenuItem value={'Comerciante'}>Comerciante</MenuItem>
+                <MenuItem value={'Prestador de Servicos'}>Prestador de Servicos</MenuItem>
+              </Select>
+              <FormHelperText error id="helper-text-perfil-signup">
+                {errors.perfil?.type === 'required' && <p role="alert">Escolha um tipo de Utilizador</p>}
+              </FormHelperText>
             </Stack>
           </Grid>
           <Grid item xs={12}>
             <Stack spacing={1}>
-              <InputLabel htmlFor="password-signup">Password</InputLabel>
+              <InputLabel htmlFor="password-signup">Palavra Passe*</InputLabel>
               <OutlinedInput
                 fullWidth
-                error={Boolean(formik.touched.password && formik.errors.password)}
                 id="password-signup"
                 type={showPassword ? 'text' : 'password'}
-                value={formik.values.password}
                 name="password"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -245,70 +193,41 @@ const AuthRegister = () => {
                     </IconButton>
                   </InputAdornment>
                 }
+                aria-invalid={errors.password ? 'true' : 'false'}
                 placeholder="******"
+                {...register('password', { required: 'Uma palavra passe é requerida' })}
                 inputProps={{}}
               />
-              {formik.touched.password && formik.errors.password && (
-                <FormHelperText error id="helper-text-password-signup">
-                  {formik.errors.password}
-                </FormHelperText>
-              )}
+              <FormHelperText error id="helper-text-password-signup">
+                {errors.password?.type === 'required' && <p role="alert">{errors.password.message}</p>}
+              </FormHelperText>
             </Stack>
-            <FormControl fullWidth sx={{ mt: 2 }}>
-              <Grid container spacing={2} alignItems="center">
-                <Grid item>
-                  <Box
-                    sx={{
-                      bgcolor: level?.color,
-                      width: 85,
-                      height: 8,
-                      borderRadius: '7px'
-                    }}
-                  />
-                </Grid>
-                <Grid item>
-                  <Typography variant="subtitle1" fontSize="0.75rem">
-                    {level?.label}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </FormControl>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body2">
-              By Signing up, you agree to our &nbsp;
+              Por se cadastrar, você está aceitando os nossos &nbsp;
               <Link variant="subtitle2" component={RouterLink} to="#">
-                Terms of Service
+                Termos de Serviços
               </Link>
-              &nbsp; and &nbsp;
+              &nbsp; e &nbsp;
               <Link variant="subtitle2" component={RouterLink} to="#">
-                Privacy Policy
+                Política de Privacidade
               </Link>
             </Typography>
           </Grid>
-          {formik.errors.submit && (
-            <Grid item xs={12}>
-              <FormHelperText error>{formik.errors.submit}</FormHelperText>
-            </Grid>
-          )}
+          <Grid item xs={12}>
+            <FormHelperText error></FormHelperText>
+          </Grid>
           <Grid item xs={12}>
             <AnimateButton>
-              <Button
-                disableElevation
-                disabled={formik.isSubmitting}
-                fullWidth
-                size="large"
-                type="submit"
-                variant="contained"
-                color="primary"
-              >
-                Create Account
+              <Button disableElevation fullWidth size="large" type="submit" variant="contained" color="primary">
+                Criar a sua conta
               </Button>
             </AnimateButton>
           </Grid>
           <Grid item xs={12}>
             <Divider>
-              <Typography variant="caption">Sign up with</Typography>
+              <Typography variant="caption">Entra com</Typography>
             </Divider>
           </Grid>
           <Grid item xs={12}>

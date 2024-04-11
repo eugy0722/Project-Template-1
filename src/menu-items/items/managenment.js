@@ -41,7 +41,7 @@ const managenment = {
       id: 'manager-products',
       title: 'Products & Services',
       type: 'item',
-      url: '/productsservices',
+      url: '/business',
       icon: icons.ProductServiceOutlined
     }
   ]

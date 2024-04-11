@@ -19,8 +19,7 @@ import {
 } from '@mui/material';
 
 // third party
-import * as Yup from 'yup';
-import { Formik } from 'formik';
+import { useForm } from 'react-hook-form';
 
 // project import
 import FirebaseSocial from './FirebaseSocial';
@@ -35,12 +34,17 @@ import useAuthContext from '../../../auth/hook/useAuthContext';
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const AuthLogin = () => {
+  // Estados
   const [checked, setChecked] = React.useState(false);
-  const [input, setInput] = React.useState({ email: '', password: '' });
-
   const [showPassword, setShowPassword] = React.useState(false);
 
+  // ContextAPI
   const { LogInAction } = useAuthContext();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit
+  } = useForm();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -50,144 +54,103 @@ const AuthLogin = () => {
     event.preventDefault();
   };
 
-  const handleSubmit = async () => {
-    if (input.email !== '' && input.password !== '') {
-      await LogInAction(input);
-      return;
-    }
-  };
-
-  const handleChange = (values) => {
-    setInput({ email: values.email, password: values.password });
+  const onSubmit = async (data) => {
+    await LogInAction(data);
   };
 
   return (
     <>
-      <Formik
-        initialValues={{
-          email: '',
-          password: '',
-          submit: null
-        }}
-        validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
-        })}
-        onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          try {
-            setStatus({ success: false });
-            setSubmitting(false);
-            handleChange(values);
-            handleSubmit(values);
-          } catch (err) {
-            setStatus({ success: false });
-            setErrors({ submit: err.message });
-            setSubmitting(false);
-          }
-        }}
-      >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-          <form noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Email Address</InputLabel>
-                  <OutlinedInput
-                    id="email-login"
-                    type="email"
-                    value={values.email}
-                    name="email"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    placeholder="Enter email address"
-                    fullWidth
-                    error={Boolean(touched.email && errors.email)}
-                  />
-                  {touched.email && errors.email && (
-                    <FormHelperText error id="standard-weight-helper-text-email-login">
-                      {errors.email}
-                    </FormHelperText>
-                  )}
-                </Stack>
-              </Grid>
-              <Grid item xs={12}>
-                <Stack spacing={1}>
-                  <InputLabel htmlFor="password-login">Password</InputLabel>
-                  <OutlinedInput
-                    fullWidth
-                    error={Boolean(touched.password && errors.password)}
-                    id="-password-login"
-                    type={showPassword ? 'text' : 'password'}
-                    value={values.password}
-                    name="password"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                          size="large"
-                        >
-                          {showPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    placeholder="Enter password"
-                  />
-                  {touched.password && errors.password && (
-                    <FormHelperText error id="standard-weight-helper-text-password-login">
-                      {errors.password}
-                    </FormHelperText>
-                  )}
-                </Stack>
-              </Grid>
+      <form noValidate onSubmit={handleSubmit(onSubmit)}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Stack spacing={1}>
+              <InputLabel htmlFor="email-login">Endereço de Email</InputLabel>
+              <OutlinedInput
+                id="email-login"
+                type="email"
+                name="email"
+                aria-invalid={errors.email ? 'true' : 'false'}
+                placeholder="Entrar com endereço de email"
+                {...register('email', { required: 'Introduza um email válido' })}
+                fullWidth
+              />
+              <FormHelperText error id="standard-weight-helper-text-email-login">
+                {errors.email?.type === 'required' && <p role="alert">{errors.email.message}</p>}
+              </FormHelperText>
+            </Stack>
+          </Grid>
+          <Grid item xs={12}>
+            <Stack spacing={1}>
+              <InputLabel htmlFor="password-login">Palavra Passe</InputLabel>
+              <OutlinedInput
+                fullWidth
+                id="-password-login"
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                aria-invalid={errors.password ? 'true' : 'false'}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                      size="large"
+                    >
+                      {showPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                placeholder="Entre com a sua Palavra Passe"
+                {...register('password', { required: 'É necessário uma Palavra Passe' })}
+              />
+              <FormHelperText error id="standard-weight-helper-text-password-login">
+                {errors.password?.type === 'required' && <p role="alert">{errors.password.message}</p>}
+              </FormHelperText>
+            </Stack>
+          </Grid>
 
-              <Grid item xs={12} sx={{ mt: -1 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={checked}
-                        onChange={(event) => setChecked(event.target.checked)}
-                        name="checked"
-                        color="primary"
-                        size="small"
-                      />
-                    }
-                    label={<Typography variant="h6">Keep me sign in</Typography>}
+          <Grid item xs={12} sx={{ mt: -1 }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={checked}
+                    onChange={(event) => setChecked(event.target.checked)}
+                    name="checked"
+                    color="primary"
+                    size="small"
                   />
-                  <Link variant="h6" component={RouterLink} to="" color="text.primary">
-                    Forgot Password?
-                  </Link>
-                </Stack>
-              </Grid>
-              {errors.submit && (
-                <Grid item xs={12}>
-                  <FormHelperText error>{errors.submit}</FormHelperText>
-                </Grid>
-              )}
-              <Grid item xs={12}>
-                <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Login
-                  </Button>
-                </AnimateButton>
-              </Grid>
-              <Grid item xs={12}>
-                <Divider>
-                  <Typography variant="caption"> Login with</Typography>
-                </Divider>
-              </Grid>
-              <Grid item xs={12}>
-                <FirebaseSocial />
-              </Grid>
+                }
+                label={<Typography variant="h6">Lembre de min</Typography>}
+              />
+              <Link variant="h6" component={RouterLink} to="" color="text.primary">
+                Esqueceu-se da Palavra Passe?
+              </Link>
+            </Stack>
+          </Grid>
+          {errors.submit && (
+            <Grid item xs={12}>
+              <FormHelperText error>{errors.submit}</FormHelperText>
             </Grid>
-          </form>
-        )}
-      </Formik>
+          )}
+          <Grid item xs={12}>
+            <AnimateButton>
+              <Button disableElevation fullWidth size="large" type="submit" variant="contained" color="primary">
+                Entrar
+              </Button>
+            </AnimateButton>
+          </Grid>
+          <Grid item xs={12}>
+            <Divider>
+              <Typography variant="caption"> Entrar com </Typography>
+            </Divider>
+          </Grid>
+          <Grid item xs={12}>
+            <FirebaseSocial />
+          </Grid>
+        </Grid>
+      </form>
     </>
   );
 };
